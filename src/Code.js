@@ -1,6 +1,8 @@
 var listOfGroup = { Ungroup: { sheets: [] } };
 const SIDEBAR =
   HtmlService.createHtmlOutputFromFile("index").setTitle("Grouping Sheets");
+const SHEETCREATETEMPLATEHTML =
+  HtmlService.createHtmlOutputFromFile("templatedSheetCreate").setTitle("Create Sheet from a Template");
 
 // database sheet name
 const DATABASE = "DATABASE";
@@ -96,6 +98,8 @@ function onOpen() {
     .addItem("Create a new group", "createGroup")
     .addSeparator()
     .addItem("Edit groups", "openSidebar")
+    .addSeparator()
+    .addItem("Add a templated sheet", "showTemplateTypeSelectHTML")
     .addToUi();
 }
 
@@ -685,6 +689,28 @@ function deleteGroup(groupName) {
     );
     openSidebar();
   }
+}
+
+/**
+ * Shows the HTML for choosing the template type
+ * 
+ */
+
+function showTemplateTypeSelectHTML()
+{
+	var ui = spreadsheet.getEditorUi();
+
+	ui.showSidebar(SHEETCREATETEMPLATEHTML);
+}
+
+/**
+ * Shows the HTML for creating the columns and input fields for the statement
+ * 
+ */
+
+function showCreateInputFieldForm()
+{
+
 }
 
 export {
