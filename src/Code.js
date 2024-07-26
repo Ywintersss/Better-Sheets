@@ -731,4 +731,5 @@ export {
   openSidebar,
   createGroup,
   createNewSheets,
+  showTemplateTypeSelectHTML,
 };

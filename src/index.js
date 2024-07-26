@@ -16,6 +16,7 @@ import {
   openSidebar,
   createGroup,
   createNewSheets,
+  showTemplateTypeSelectHTML,
 } from "./Code";
 
 global.deleteGroup = deleteGroup;
@@ -35,3 +36,4 @@ global.addSheetsToGroup = addSheetsToGroup;
 global.openSidebar = openSidebar;
 global.createGroup = createGroup;
 global.createNewSheets = createNewSheets;
+global.showTemplateTypeSelectHTML = showTemplateTypeSelectHTML;
