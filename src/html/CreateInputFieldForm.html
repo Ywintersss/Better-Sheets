@@ -4,14 +4,23 @@
     <base target="_top" />
   </head>
   <script>
+    let columns = []
+    function addColumn(){
+        let columnName = document.getElementById("column-name-input").value
+
+        if (columnName != ''){
+            columns.push(columnName);
+        }
+    }
+
+    function createTemplatedSheet(){
+        google.script.run.createTemplatedSheet(columns)
+    }
   </script>
   <body>
-    <label for="select-box">Templates: </label>
-    <select id="select-box">
-      <option selected disabled value="-1">Select Sheet</option>
-      <option value="statement">Statements</option>
-    </select>
+    <input id="column-name-input" type="text" placeholder="Column Name">
 
-    <button onclick="">Confirm</button>
+    <button onclick="addColumn()">Add</button>
+    <button onclick="createTemplatedSheet()">Confirm</button>
   </body>
 </html>

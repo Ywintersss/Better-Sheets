@@ -1,22 +1,24 @@
 import {
-  deleteGroup,
-  ungroupGroup,
-  editGroup,
-  deleteSheet,
-  ungroupSheet,
-  renameSheet,
-  unhideAndMoveSheets,
-  setActiveSheet,
-  getListOfGroups,
-  warning,
-  onChange,
-  onOpen,
-  setupTrigger_onChange,
-  addSheetsToGroup,
-  openSidebar,
-  createGroup,
-  createNewSheets,
-  showTemplateTypeSelectHTML,
+	deleteGroup,
+	ungroupGroup,
+	editGroup,
+	deleteSheet,
+	ungroupSheet,
+	renameSheet,
+	unhideAndMoveSheets,
+	setActiveSheet,
+	getListOfGroups,
+	warning,
+	onChange,
+	onOpen,
+	setupTrigger_onChange,
+	addSheetsToGroup,
+	openSidebar,
+	createGroup,
+	createNewSheets,
+	showTemplateTypeSelectHTML,
+	showCreateInputFieldForm,
+	createTemplatedSheet,
 } from "./Code";
 
 global.deleteGroup = deleteGroup;
@@ -37,3 +39,5 @@ global.openSidebar = openSidebar;
 global.createGroup = createGroup;
 global.createNewSheets = createNewSheets;
 global.showTemplateTypeSelectHTML = showTemplateTypeSelectHTML;
+global.showCreateInputFieldForm = showCreateInputFieldForm;
+global.createTemplatedSheet = createTemplatedSheet;
