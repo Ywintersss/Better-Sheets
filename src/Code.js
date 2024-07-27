@@ -815,8 +815,7 @@ function createTemplatedSheet(inputFormFields, templateName) {
 
 				reportStatement
 					.getRange("C3")
-					.setValue(header.getResponseText())
-					.setFontSize(20);
+					.setValue(header.getResponseText());
 
 				reportStatement
 					.getRange("E5")
