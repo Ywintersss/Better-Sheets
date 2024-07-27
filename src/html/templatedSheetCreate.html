@@ -21,7 +21,7 @@
       const inputContainer = document.querySelector(".input-container");
       const templateFields = document.querySelector(".template-fields");
       
-      if (inputField.disabled === false){
+      if (inputField.disabled === false && !inputContainer.classList.contains("disabled")) {
         return;
       }
       
@@ -30,9 +30,16 @@
       inputContainer.classList.remove("disabled");
 
       templateFields.removeChild(templateFields.lastElementChild);
+  
+    }
+
+    function changeTemplate() {
+      const templateName = document.getElementById("select-box").value;
 
       //add default fields here
-      addField("Expense", true)
+      if (templateName === "INCOME_STATEMENT"){
+        addField("Expenses", true);
+      }
     }
 
     function addField(fieldName, isDefault = false) {
@@ -91,9 +98,10 @@
       <div class="form-content">
         <div class="template-select">
           <label for="select-box">Templates: </label>
-          <select id="select-box" onchange="enableInputField()">
+          <select id="select-box" onchange="enableInputField(), changeTemplate()">
             <option selected disabled value="-1">Select Sheet</option>
             <option value="INCOME_STATEMENT">Statements</option>
+            <option value="CASH_FLOW">Cash Flow</option>
           </select>
         </div>
         <div class="template-fields">
