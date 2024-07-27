@@ -769,6 +769,15 @@ function createTemplatedSheet(inputFormFields, templateName) {
 		switch (templateName) {
 			case "INCOME_STATEMENT":
 				let ss = spreadsheet.getActiveSpreadsheet();
+				if (
+					ss.getSheetByName("Income Statement Input Form") ||
+					ss.getSheetByName("Income Statement")
+				) {
+					let ui = spreadsheet.getEditorUi();
+
+					ui.alert("Sheets already created");
+					return;
+				}
 				let inputFormTemplate = ss.getSheetByName(
 					"Input Form Template"
 				);
@@ -802,10 +811,17 @@ function createTemplatedSheet(inputFormFields, templateName) {
 					)
 					.setValues([inputFormFields]);
 
-				let reportStatement = ss
-					.getSheetByName("Income Statement")
+				let reportStatement = ss.getSheetByName("Income Statement");
+
+				reportStatement
 					.getRange("C3")
-					.setValue(header.getResponseText());
+					.setValue(header.getResponseText())
+					.setFontSize(20);
+
+				reportStatement
+					.getRange("E5")
+					.setValue(period.getResponseText())
+					.setHorizontalAlignment("right");
 				break;
 		}
 	} else if (header.getSelectedButton() == ui.Button.CANCEL) {
