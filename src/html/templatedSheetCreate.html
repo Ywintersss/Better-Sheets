@@ -1,19 +1,18 @@
 <!doctype html>
 <html>
-  <head>
-    <base target="_top" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  </head>
-  <script>
-    //Deprecated
-    // function createSheet()
-    // {
-    //   let sheetType = document.getElementById("select-box").value
-    //   google.script.run.showCreateInputFieldForm(sheetType);
-    // }
+	<head>
+		<base target="_top" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+		/>
+	</head>
+	<script>
+		let columns = [];
 
-    function createTemplatedSheet() {
-			google.script.run.createTemplatedSheet(columns);
+		function createTemplatedSheet() {
+			const templateName = document.getElementById("select-box").value;
+			google.script.run.createTemplatedSheet(columns, templateName);
 		}
     
     function enableInputField(){
@@ -50,16 +49,20 @@
 
       removeFields();
 
-      //add default fields here
-      if (templateName === "INCOME_STATEMENT"){
-        addField("Expenses", true);
-        addField("Assets", true);
-      }
-    }
+			//add default fields here
+			if (templateName === "INCOME_STATEMENT") {
+				addField("Product Name", true);
+				addField("Quantity", true);
+				addField("Category", true);
+				addField("Status", true);
+				addField("Cost", true);
+				addField("Total", true);
+			}
+		}
 
-    function addField(fieldName, isDefault = false) {
-      const templateFields = document.querySelector(".template-fields");
-      const fieldNames = document.querySelectorAll(".field");
+		function addField(fieldName, isDefault = false) {
+			const templateFields = document.querySelector(".template-fields");
+			const fieldNames = document.querySelectorAll(".field");
 
       for (let i = 0; i < fieldNames.length; i++) {
         const field = fieldNames[i];
@@ -76,241 +79,261 @@
       const field = document.createElement("div");
       field.classList.add("field");
 
-      const fieldText = document.createElement("span");
-      fieldText.textContent = fieldName;
-      
-      field.appendChild(fieldText);
+			const fieldText = document.createElement("span");
+			fieldText.textContent = fieldName;
 
-      //template non default fields(user added fields)
-      if (!isDefault) {
-        const iconSpan = document.createElement("span");
-        iconSpan.classList.add("icon");
+			field.appendChild(fieldText);
 
-        //remove function
-        iconSpan.addEventListener("click", () => {
-          fieldContainer.remove();
-        }); 
-        
-        const icon = document.createElement("i");
-        icon.classList.add("fa-solid");
-        icon.classList.add("fa-trash");
+			//template non default fields(user added fields)
+			if (!isDefault) {
+				const iconSpan = document.createElement("span");
+				iconSpan.classList.add("icon");
 
-        iconSpan.appendChild(icon);
-        field.appendChild(iconSpan);
-      }
+				//remove function
+				iconSpan.addEventListener("click", () => {
+					fieldContainer.remove();
+					let index = columns.indexOf(fieldName);
 
-      fieldContainer.appendChild(field);
+					if (index > -1) {
+						columns.splice(index, 1);
+					}
+				});
 
-      
-      templateFields.appendChild(fieldContainer); 
-    }
+				const icon = document.createElement("i");
+				icon.classList.add("fa-solid");
+				icon.classList.add("fa-trash");
 
+				iconSpan.appendChild(icon);
+				field.appendChild(iconSpan);
+				columns.push(fieldName);
+			}
 
-  </script>
-  <body>
-    <form>
-      <div class="form-content">
-        <div class="template-select">
-          <label for="select-box">Templates: </label>
-          <select id="select-box" onchange="enableInputField(), changeTemplate()">
-            <option selected disabled value="-1">Select Sheet</option>
-            <option value="INCOME_STATEMENT">Statements</option>
-            <option value="CASH_FLOW">Cash Flow</option>
-          </select>
-        </div>
-        <div class="template-fields">
-          <span class="field-label">Fields:</span>
-          <div class="field-container">
-            <div class="field">
-              <span>Please select a template!</span>
-            </div>
-          </div>
-        </div>
-        <div class="input-container disabled">
-          <div class="input-field">
-            <label for="field-input">Add Field:</label>
-            <input type="text" placeholder="Cost, Expenses..." disabled id="field-input">
-          </div>
-          <button type="button" onclick="addField(document.getElementById('field-input').value)">Add</button>
-        </div>
-        <button type="submit" onclick="createTemplatedSheets()">Confirm</button>
-      </div>
-    </form>
-  </body>
+			fieldContainer.appendChild(field);
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Google+Sans&display=swap');
+			templateFields.appendChild(fieldContainer);
+		}
+	</script>
+	<body>
+		<form>
+			<div class="form-content">
+				<div class="template-select">
+					<label for="select-box">Templates: </label>
+					<select
+						id="select-box"
+						onchange="enableInputField(), changeTemplate()"
+					>
+						<option selected disabled value="-1">
+							Select Sheet
+						</option>
+						<option value="INCOME_STATEMENT">Statements</option>
+						<option value="CASH_FLOW">Cash Flow</option>
+					</select>
+				</div>
+				<div class="template-fields">
+					<span class="field-label">Fields:</span>
+					<div class="field-container">
+						<div class="field">
+							<span>Please select a template!</span>
+						</div>
+					</div>
+				</div>
+				<div class="input-container disabled">
+					<div class="input-field">
+						<label for="field-input">Add Field:</label>
+						<input
+							type="text"
+							placeholder="Cost, Expenses..."
+							disabled
+							id="field-input"
+						/>
+					</div>
+					<button
+						type="button"
+						onclick="addField(document.getElementById('field-input').value)"
+					>
+						Add
+					</button>
+				</div>
+				<button type="submit" onclick="createTemplatedSheet()">
+					Confirm
+				</button>
+			</div>
+		</form>
+	</body>
 
-    * {
-        box-sizing: border-box;
-    }
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Google+Sans&display=swap");
 
-    body {
-        font-family: 'Google Sans', sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        height: 100vh;
-        background-color: #f4f4f4;
-    }
+		* {
+			box-sizing: border-box;
+		}
 
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
+		body {
+			font-family: "Google Sans", sans-serif;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			height: 100vh;
+			background-color: #f4f4f4;
+		}
 
-    i::before{  
-      content: "\f1f8";
-    }
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
+		}
 
-    .form-content {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+		i::before {
+			content: "\f1f8";
+		}
 
-    .form-content > *:not(button) {
-      padding: 6px 12px;
-      background-color: #f9f9f9;
-      /* Light background for group */
-      border: 1px solid #ddd;
-      /* Border for group */
-      border-radius: 8px;
-      /* Rounded corners */
-      padding: 10px;
-      /* Padding inside the group */
-      margin-bottom: 20px;
-      /* Space between groups */
-    }
-    
-    .template-select {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
+		.form-content {
+			display: flex;
+			flex-direction: column;
+			width: 300px;
+			padding: 20px;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
 
-    .template-select select {
-      font-family: 'Google Sans', sans-serif;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 6px;
-      cursor: pointer;
-      transition: 0.05s;
-    }
+		.form-content > *:not(button) {
+			padding: 6px 12px;
+			background-color: #f9f9f9;
+			/* Light background for group */
+			border: 1px solid #ddd;
+			/* Border for group */
+			border-radius: 8px;
+			/* Rounded corners */
+			padding: 10px;
+			/* Padding inside the group */
+			margin-bottom: 20px;
+			/* Space between groups */
+		}
 
-    .template-select select:hover {
-      background-color: #f9f9f9;
-    }
+		.template-select {
+			display: flex;
+			gap: 6px;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 8px;
+		}
 
-    .template-fields {
-      display: flex;
-      flex-direction: column;
-    }
+		.template-select select {
+			font-family: "Google Sans", sans-serif;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			padding: 6px;
+			cursor: pointer;
+			transition: 0.05s;
+		}
 
-    .template-fields > span{
-      margin-bottom: 6px;
-    }
+		.template-select select:hover {
+			background-color: #f9f9f9;
+		}
 
-    .field-container:not(:last-child) {
-      margin-bottom: 4px;
-    }
+		.template-fields {
+			display: flex;
+			flex-direction: column;
+		}
 
-    .field{
-      display: flex;
-      justify-content: space-between;
-    }
+		.template-fields > span {
+			margin-bottom: 6px;
+		}
 
-    .field span{
-      font-weight: bold;
-    }
+		.field-container:not(:last-child) {
+			margin-bottom: 4px;
+		}
 
-    .icon{
-      font-family: "Font Awesome 6 Free";
-      cursor: pointer;
-    }
+		.field {
+			display: flex;
+			justify-content: space-between;
+		}
 
-    .disabled {
-      background-color: #e9e9e9 !important; /* Lighter background for disabled state */
-      border: 1px solid #ccc !important; /* Lighter border for disabled state */
-      color: #999 !important; /* Lighter text color */
-      cursor: not-allowed !important; /* Change cursor to indicate non-interactivity */
-      opacity: 0.6 !important; /* Slight transparency to indicate disabled state */
-    }
+		.field span {
+			font-weight: bold;
+		}
 
-    button {
-        font-family: 'Google Sans', sans-serif;
-        
-        /* Full width */
-        padding: 10px;
-        /* Padding for the button */
-        background-color: #007bff;
-        /* Button color */
-        color: white;
-        /* Text color */
-        border: none;
-        /* No border */
-        border-radius: 5px;
-        /* Rounded corners */
-        cursor: pointer;
-        /* Pointer cursor */
-        font-size: 0.8em;
-        /* Font size */
-    }
+		.icon {
+			font-family: "Font Awesome 6 Free";
+			cursor: pointer;
+		}
 
-    button:hover {
-        background-color: #0056b3;
-        /* Darker shade on hover */
-    }
+		.disabled {
+			background-color: #e9e9e9 !important; /* Lighter background for disabled state */
+			border: 1px solid #ccc !important; /* Lighter border for disabled state */
+			color: #999 !important; /* Lighter text color */
+			cursor: not-allowed !important; /* Change cursor to indicate non-interactivity */
+			opacity: 0.6 !important; /* Slight transparency to indicate disabled state */
+		}
 
-    .input-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 6px;
-        transition: 0.15s ease;
-    }
+		button {
+			font-family: "Google Sans", sans-serif;
 
-    .input-field {
-      display: flex;   
-      gap: 10px;
-      align-items: center;
-    }
+			/* Full width */
+			padding: 10px;
+			/* Padding for the button */
+			background-color: #007bff;
+			/* Button color */
+			color: white;
+			/* Text color */
+			border: none;
+			/* No border */
+			border-radius: 5px;
+			/* Rounded corners */
+			cursor: pointer;
+			/* Pointer cursor */
+			font-size: 0.8em;
+			/* Font size */
+		}
 
-    .input-field input {
-      width: 100%;
-      padding: 6px;
-    }
+		button:hover {
+			background-color: #0056b3;
+			/* Darker shade on hover */
+		}
 
-    .input-field label {
-      width: 50%;
-    }
+		.input-container {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			gap: 6px;
+			transition: 0.15s ease;
+		}
 
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-        .container {
-            flex-direction: column;
-            align-items: stretch;
-        }
+		.input-field {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
 
-        .sidebar {
-            width: 100%;
-            /* Full width on small screens */
-            margin-left: 0;
-            /* Remove margin on small screens */
-            margin-top: 20px;
-            /* Add space above the sidebar */
-        }
-    }
-  </style>
+		.input-field input {
+			width: 100%;
+			padding: 6px;
+		}
+
+		.input-field label {
+			width: 50%;
+		}
+
+		/* Responsive Styles */
+		@media (max-width: 768px) {
+			.container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.sidebar {
+				width: 100%;
+				/* Full width on small screens */
+				margin-left: 0;
+				/* Remove margin on small screens */
+				margin-top: 20px;
+				/* Add space above the sidebar */
+			}
+		}
+	</style>
 </html>
