@@ -89,6 +89,8 @@ const spreadsheet = {
 			if (
 				groupedSheetNames.indexOf(sheetName) === -1 &&
 				sheetName != "DATABASE" &&
+				sheetName != "Input Form Template" &&
+				sheetName != "Income Statement Template" &&
 				!(sheetName in listOfGroup)
 			) {
 				listOfGroup["Ungroup"]["sheets"].push(sheetName);
