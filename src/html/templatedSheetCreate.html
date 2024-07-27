@@ -2,6 +2,7 @@
 <html>
   <head>
     <base target="_top" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   </head>
   <script>
     //Deprecated
@@ -31,10 +32,10 @@
       templateFields.removeChild(templateFields.lastElementChild);
 
       //add default fields here
-      addField("Expense")
+      addField("Expense", true)
     }
 
-    function addField(fieldName){
+    function addField(fieldName, isDefault = false) {
       const templateFields = document.querySelector(".template-fields");
       const fieldNames = document.querySelectorAll(".field");
 
@@ -45,19 +46,40 @@
             console.log("Field already exists");
             return;
         }
-    }
+      }
 
+      
       const fieldContainer = document.createElement("div");
       fieldContainer.classList.add("field-container");
-
+      
       const field = document.createElement("div");
       field.classList.add("field");
 
       const fieldText = document.createElement("span");
       fieldText.textContent = fieldName;
-
+      
       field.appendChild(fieldText);
+
+      //template non default fields(user added fields)
+      if (!isDefault) {
+        const iconSpan = document.createElement("span");
+        iconSpan.classList.add("icon");
+
+        //remove function
+        iconSpan.addEventListener("click", () => {
+          fieldContainer.remove();
+        }); 
+        
+        const icon = document.createElement("i");
+        icon.classList.add("fa-solid");
+        icon.classList.add("fa-trash");
+
+        iconSpan.appendChild(icon);
+        field.appendChild(iconSpan);
+      }
+
       fieldContainer.appendChild(field);
+
       
       templateFields.appendChild(fieldContainer); 
     }
@@ -119,6 +141,10 @@
       width: 100%;
     }
 
+    i::before{  
+      content: "\f1f8";
+    }
+
     .form-content {
       display: flex;
       flex-direction: column;
@@ -174,8 +200,22 @@
       margin-bottom: 6px;
     }
 
+    .field-container:not(:last-child) {
+      margin-bottom: 4px;
+    }
+
+    .field{
+      display: flex;
+      justify-content: space-between;
+    }
+
     .field span{
       font-weight: bold;
+    }
+
+    .icon{
+      font-family: "Font Awesome 6 Free";
+      cursor: pointer;
     }
 
     .disabled {
