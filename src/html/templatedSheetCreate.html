@@ -27,18 +27,33 @@
       
       //enables input field
       inputField.disabled = false;
-      inputContainer.classList.remove("disabled");
-
-      templateFields.removeChild(templateFields.lastElementChild);
-  
+      inputContainer.classList.remove("disabled");  
     }
 
     function changeTemplate() {
       const templateName = document.getElementById("select-box").value;
+      
+      const removeFields = () => {
+        const templateFields = document.querySelector(".template-fields");
+        const nodesToRemove = [];
+
+        templateFields.childNodes.forEach((field) => { 
+          if (field.nodeType === Node.ELEMENT_NODE && field.nodeName !== "SPAN") {
+            nodesToRemove.push(field);
+          }
+        })
+
+        nodesToRemove.forEach((node) => {
+          templateFields.removeChild(node);
+        })
+      }
+
+      removeFields();
 
       //add default fields here
       if (templateName === "INCOME_STATEMENT"){
         addField("Expenses", true);
+        addField("Assets", true);
       }
     }
 
@@ -48,7 +63,6 @@
 
       for (let i = 0; i < fieldNames.length; i++) {
         const field = fieldNames[i];
-        console.log(field.childNodes[0].textContent);
         if (field.childNodes[0].textContent === fieldName) {
             console.log("Field already exists");
             return;
