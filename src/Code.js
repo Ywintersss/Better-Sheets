@@ -1,36 +1,53 @@
 var listOfGroup = { Ungroup: { sheets: [] } };
+
 const SIDEBAR =
 	HtmlService.createHtmlOutputFromFile("index").setTitle("Grouping Sheets");
+
 const SHEETCREATETEMPLATEHTML = HtmlService.createHtmlOutputFromFile(
 	"templatedSheetCreate"
 ).setTitle("Create Sheet from a Template");
-/* const CREATEINPUTFIELDFORMHTML = HtmlService.createHtmlOutputFromFile(
-	"CreateInputFieldForm"
-).setTitle("Form Fields"); */
 
-let selectedSheetTemplate = {
-	sheetType: "",
-	setSheetType(sheetType) {
-		this.sheetType = sheetType;
-	},
-};
-
-// database sheet name
+// Database Sheet Name
 const DATABASE = 'DATABASE';
 
 // Spreadsheet obj
 const spreadsheet = {
+
+	/**
+	 * Returns the Spreadsheet's ID
+	 * 
+	 * @returns {string} 
+	 */
+
 	getSpreadsheetId() {
 		return SpreadsheetApp.getActiveSpreadsheet().getId();
 	},
+
+	/**
+	 * Returns the active spreadsheet
+	 * 
+	 * @returns {GoogleAppsScript.Spreadsheet.Spreadsheet}
+	 */
 
 	getActiveSpreadsheet() {
 		return SpreadsheetApp.getActiveSpreadsheet();
 	},
 
+	/**
+	 * Returns the UI Object
+	 * 
+	 * @returns {GoogleAppsScript.Base.Ui}
+	 */
+
 	getEditorUi() {
 		return SpreadsheetApp.getUi();
 	},
+
+	/**
+	 * Returns an array of sheets
+	 * 
+	 * @returns {GoogleAppsScript.Spreadsheet.Sheet[]}
+	 */
 
 	getListOfSheets() {
 		// Open the spreadsheet by its ID
@@ -40,6 +57,12 @@ const spreadsheet = {
 		// Get all sheets in the spreadsheet
 		return sheetFile.getSheets();
 	},
+
+	/**
+	 * Gets the database Sheet
+	 * 
+	 * @returns {GoogleAppsScript.Spreadsheet.Sheet} 
+	 */
 
 	getDatabaseSheet() {
 		var ss = this.getActiveSpreadsheet();
@@ -51,6 +74,11 @@ const spreadsheet = {
 		return sheet;
 	},
 
+	/**
+	 * Saves the groupings
+	 * 
+	 */
+
 	saveGroups() {
 		var sheet = this.getDatabaseSheet();
 		sheet.clear(); // Clear existing data
@@ -58,6 +86,11 @@ const spreadsheet = {
 		Logger.log("saveGroups:");
 		Logger.log(listOfGroup);
 	},
+
+	/**
+	 * Loads the groupings
+	 * 
+	 */
 
 	loadGroups() {
 		var sheet = this.getDatabaseSheet();
