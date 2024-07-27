@@ -149,6 +149,11 @@ function onOpen() {
 		.addToUi();
 }
 
+/**
+ * Creates a new group
+ * 
+ */
+
 function createGroup() {
 	spreadsheet.loadGroups();
 
@@ -202,6 +207,12 @@ function createGroup() {
 		}
 	}
 }
+
+/**
+ * Add Sheets to group
+ * 
+ * @param {Array} list
+ */
 
 function addSheetsToGroup(list) {
 	spreadsheet.loadGroups();
@@ -376,6 +387,13 @@ function unhideAndMoveSheets(groupName) {
 	}
 }
 
+/**
+ * Renames the sheet
+ * 
+ * @param {string} groupName
+ * @param {string} sheetName
+ */
+
 function renameSheet(groupName, sheetName) {
 	spreadsheet.loadGroups();
 	var ui = spreadsheet.getEditorUi();
@@ -436,6 +454,13 @@ function renameSheet(groupName, sheetName) {
 	}
 }
 
+/**
+ * Ungroups the sheet from the group
+ * 
+ * @param {string} groupName
+ * @param {string} sheetName
+ */
+
 function ungroupSheet(groupName, sheetName) {
 	spreadsheet.loadGroups();
 	var ui = spreadsheet.getEditorUi();
@@ -470,6 +495,13 @@ function ungroupSheet(groupName, sheetName) {
 		openSidebar();
 	}
 }
+
+/**
+ * Delete the sheet from the group
+ * 
+ * @param {string} groupName
+ * @param {string} sheetName
+ */
 
 function deleteSheet(groupName, sheetName) {
 	spreadsheet.loadGroups();
@@ -512,6 +544,12 @@ function deleteSheet(groupName, sheetName) {
 		openSidebar();
 	}
 }
+
+/**
+ * Edit the group name
+ * 
+ * @param {string} groupName 
+ */
 
 function editGroup(groupName) {
 	spreadsheet.loadGroups();
@@ -593,6 +631,12 @@ function editGroup(groupName) {
 	}
 }
 
+/**
+ * Ungroup the group
+ * 
+ * @param {string} groupName 
+ */
+
 function ungroupGroup(groupName) {
 	spreadsheet.loadGroups();
 	var ui = spreadsheet.getEditorUi();
@@ -633,6 +677,12 @@ function ungroupGroup(groupName) {
 		openSidebar();
 	}
 }
+
+/**
+ * Delete groups from the database
+ * 
+ * @param {string} groupName
+ */
 
 function deleteGroup(groupName) {
 	spreadsheet.loadGroups();
@@ -710,18 +760,6 @@ function showTemplateTypeSelectHTML() {
 }
 
 /**
- * Shows the HTML for creating the columns and input fields for the statement
- *
- */
-
-/* function showCreateInputFieldForm(sheetType) {
-	var ui = spreadsheet.getEditorUi();
-	selectedSheetTemplate.setSheetType(sheetType);
-
-	ui.showSidebar(CREATEINPUTFIELDFORMHTML);
-}
- */
-/**
  * Creates the templated sheet
  *
  * @param {Array} inputFormFields
@@ -775,6 +813,7 @@ function createTemplatedSheet(inputFormFields, templateName) {
 				let incomeStatementTemplate = ss.getSheetByName(
 					"Income Statement Template"
 				);
+
 				if (inputFormFields.length != 0) {
 					ss.insertSheet({ template: inputFormTemplate })
 						.setName("Income Statement Input Form")
@@ -798,6 +837,7 @@ function createTemplatedSheet(inputFormFields, templateName) {
 				SpreadsheetApp.flush();
 
 				let newSheet = ss.getSheetByName("Income Statement Input Form");
+
 				if (inputFormFields.length != 0) {
 					newSheet
 						.getRange(
