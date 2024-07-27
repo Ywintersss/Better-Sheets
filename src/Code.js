@@ -8,15 +8,14 @@ const SHEETCREATETEMPLATEHTML = HtmlService.createHtmlOutputFromFile(
 ).setTitle("Create Sheet from a Template");
 
 // Database Sheet Name
-const DATABASE = 'DATABASE';
+const DATABASE = "DATABASE";
 
 // Spreadsheet obj
 const spreadsheet = {
-
 	/**
 	 * Returns the Spreadsheet's ID
-	 * 
-	 * @returns {string} 
+	 *
+	 * @returns {string}
 	 */
 
 	getSpreadsheetId() {
@@ -25,7 +24,7 @@ const spreadsheet = {
 
 	/**
 	 * Returns the active spreadsheet
-	 * 
+	 *
 	 * @returns {GoogleAppsScript.Spreadsheet.Spreadsheet}
 	 */
 
@@ -35,7 +34,7 @@ const spreadsheet = {
 
 	/**
 	 * Returns the UI Object
-	 * 
+	 *
 	 * @returns {GoogleAppsScript.Base.Ui}
 	 */
 
@@ -45,7 +44,7 @@ const spreadsheet = {
 
 	/**
 	 * Returns an array of sheets
-	 * 
+	 *
 	 * @returns {GoogleAppsScript.Spreadsheet.Sheet[]}
 	 */
 
@@ -60,8 +59,8 @@ const spreadsheet = {
 
 	/**
 	 * Gets the database Sheet
-	 * 
-	 * @returns {GoogleAppsScript.Spreadsheet.Sheet} 
+	 *
+	 * @returns {GoogleAppsScript.Spreadsheet.Sheet}
 	 */
 
 	getDatabaseSheet() {
@@ -76,7 +75,7 @@ const spreadsheet = {
 
 	/**
 	 * Saves the groupings
-	 * 
+	 *
 	 */
 
 	saveGroups() {
@@ -89,7 +88,7 @@ const spreadsheet = {
 
 	/**
 	 * Loads the groupings
-	 * 
+	 *
 	 */
 
 	loadGroups() {
@@ -132,13 +131,12 @@ const spreadsheet = {
 	},
 };
 
-function onOpen()
-{
-  warning();
+function onOpen() {
+	warning();
 
-  // Load database
-  spreadsheet.loadGroups(); 
-  spreadsheet.saveGroups(); 
+	// Load database
+	spreadsheet.loadGroups();
+	spreadsheet.saveGroups();
 
 	// Create a menu button
 	var ui = spreadsheet.getEditorUi();
@@ -205,7 +203,7 @@ function createGroup() {
 	}
 }
 
-function addSheetsToGroup(list){
+function addSheetsToGroup(list) {
 	spreadsheet.loadGroups();
 
 	var ui = spreadsheet.getEditorUi();
@@ -267,9 +265,9 @@ function addSheetsToGroup(list){
 	return listOfGroup;
 }
 
-function getListOfGroups(){
-  spreadsheet.loadGroups();
-  return listOfGroup;
+function getListOfGroups() {
+	spreadsheet.loadGroups();
+	return listOfGroup;
 }
 
 //  Open sidebar
@@ -290,11 +288,11 @@ function createNewSheets(name, color) {
 	}
 }
 
-function setupTrigger_onChange(){
-  ScriptApp.newTrigger('onChange')
-   .forSpreadsheet(SpreadsheetApp.getActive())
-   .onChange()
-   .create();
+function setupTrigger_onChange() {
+	ScriptApp.newTrigger("onChange")
+		.forSpreadsheet(SpreadsheetApp.getActive())
+		.onChange()
+		.create();
 }
 
 function onChange(e) {
@@ -305,10 +303,23 @@ function onChange(e) {
 	}
 }
 
-function warning(){
-  var ui = spreadsheet.getEditorUi();
-  var feature = ["", "Create a new group.", "Multi-select ungroup sheets and move them to a group.", "Click on the group name will show all the sheets for the group at the sheet bar.", "At the right of each group name, you can edit(rename & color), ungroup and delete the group.","Click on the sheet name will show the sheet.","At the right of each sheet name, you can rename, ungroup(remove from a group) and delete the sheet."]
-  ui.alert('Important Messages using Group-Sheets','Warning: Due to limitation of Google App Script, DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen. DO so only from THIS SIDEBAR, or else everything will MESSED UP.\n\nFeatures: ' + feature.join("\n - "), ui.ButtonSet.OK);
+function warning() {
+	var ui = spreadsheet.getEditorUi();
+	var feature = [
+		"",
+		"Create a new group.",
+		"Multi-select ungroup sheets and move them to a group.",
+		"Click on the group name will show all the sheets for the group at the sheet bar.",
+		"At the right of each group name, you can edit(rename & color), ungroup and delete the group.",
+		"Click on the sheet name will show the sheet.",
+		"At the right of each sheet name, you can rename, ungroup(remove from a group) and delete the sheet.",
+	];
+	ui.alert(
+		"Important Messages using Group-Sheets",
+		"Warning: Due to limitation of Google App Script, DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen. DO so only from THIS SIDEBAR, or else everything will MESSED UP.\n\nFeatures: " +
+			feature.join("\n - "),
+		ui.ButtonSet.OK
+	);
 }
 
 function setActiveSheet(sheetName) {
@@ -764,16 +775,21 @@ function createTemplatedSheet(inputFormFields, templateName) {
 				let incomeStatementTemplate = ss.getSheetByName(
 					"Income Statement Template"
 				);
-
-				ss.insertSheet({ template: inputFormTemplate })
-					.setName("Income Statement Input Form")
-					.getRange(
-						1,
-						inputFormTemplate.getLastColumn(),
-						inputFormTemplate.getLastRow(),
-						inputFormFields.length
-					)
-					.insertCells(SpreadsheetApp.Dimension.COLUMNS);
+				if (inputFormFields.length != 0) {
+					ss.insertSheet({ template: inputFormTemplate })
+						.setName("Income Statement Input Form")
+						.getRange(
+							1,
+							inputFormTemplate.getLastColumn(),
+							inputFormTemplate.getLastRow(),
+							inputFormFields.length
+						)
+						.insertCells(SpreadsheetApp.Dimension.COLUMNS);
+				} else {
+					ss.insertSheet({ template: inputFormTemplate }).setName(
+						"Income Statement Input Form"
+					);
+				}
 
 				ss.insertSheet({ template: incomeStatementTemplate }).setName(
 					"Income Statement"
@@ -782,14 +798,16 @@ function createTemplatedSheet(inputFormFields, templateName) {
 				SpreadsheetApp.flush();
 
 				let newSheet = ss.getSheetByName("Income Statement Input Form");
-				newSheet
-					.getRange(
-						1,
-						newSheet.getLastColumn() - inputFormFields.length,
-						1,
-						inputFormFields.length
-					)
-					.setValues([inputFormFields]);
+				if (inputFormFields.length != 0) {
+					newSheet
+						.getRange(
+							1,
+							newSheet.getLastColumn() - inputFormFields.length,
+							1,
+							inputFormFields.length
+						)
+						.setValues([inputFormFields]);
+				}
 
 				let reportStatement = ss.getSheetByName("Income Statement");
 
