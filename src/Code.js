@@ -16,7 +16,7 @@ let selectedSheetTemplate = {
 };
 
 // database sheet name
-const DATABASE = "DATABASE";
+const DATABASE = 'DATABASE';
 
 // Spreadsheet obj
 const spreadsheet = {
@@ -99,13 +99,13 @@ const spreadsheet = {
 	},
 };
 
-function onOpen() {
-	// Setup trigger
-	// setupTrigger_onSelection();
+function onOpen()
+{
+  warning();
 
-	// Load database
-	spreadsheet.loadGroups();
-	spreadsheet.saveGroups();
+  // Load database
+  spreadsheet.loadGroups(); 
+  spreadsheet.saveGroups(); 
 
 	// Create a menu button
 	var ui = spreadsheet.getEditorUi();
@@ -172,7 +172,7 @@ function createGroup() {
 	}
 }
 
-function addSheetsToGroup(list) {
+function addSheetsToGroup(list){
 	spreadsheet.loadGroups();
 
 	var ui = spreadsheet.getEditorUi();
@@ -234,6 +234,11 @@ function addSheetsToGroup(list) {
 	return listOfGroup;
 }
 
+function getListOfGroups(){
+  spreadsheet.loadGroups();
+  return listOfGroup;
+}
+
 //  Open sidebar
 function openSidebar() {
 	spreadsheet.loadGroups();
@@ -252,55 +257,12 @@ function createNewSheets(name, color) {
 	}
 }
 
-// when "group tab" clicked, unhide the sheets in it's list
-// IMCOMPLETE
-// !!! REGARDLESS OF THE CODE INSIDE(even 1 simple code), IT SOMETIMES WORK, SOMETIMES DELAY 20~30s, SOMETIMES TIMED OUT(>30s), REFER TO 'EXECUTION' FROM THE LEFT SIDEBAR !!!
-/*
-function onSelectionChange(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var db = ss.getSheetByName(DATABASE);
-  var data = db.getRange(1, 1).getValue();
-  if (data) {
-    listOfGroup = JSON.parse(data);
-  }
-  // // codes above replaced spreadsheet.loadGroups(), idk why cant use the variable spreadsheet
-
-  var sheetName = e.range.getSheet().getName();
-  
-  Logger.log('Active sheet changed to: ' + sheetName);
-  SpreadsheetApp.getUi().alert('Active sheet changed to: ' + sheetName);
-
-  // unhide all the sheets in the list 
-  if (listOfGroup.hasOwnProperty(sheetName)) {    
-    var groupSheets = listOfGroup[sheetName]['sheets'];
-    groupSheets.forEach(sheetName => {
-      var sheet = ss.getSheetByName(sheetName);
-      if (sheet) {
-        sheet.showSheet();
-      }
-    });
-    groupSheets.forEach((sheetName, index) => {
-      var sheet = ss.getSheetByName(sheetName);
-      if (sheet) {
-        ss.setActiveSheet(sheet);
-        ss.moveActiveSheet(0);
-      }
-    });
-    ss.setActiveSheet(ss.getSheetByName(sheetName));
-    ss.moveActiveSheet(0);
-  }
+function setupTrigger_onChange(){
+  ScriptApp.newTrigger('onChange')
+   .forSpreadsheet(SpreadsheetApp.getActive())
+   .onChange()
+   .create();
 }
-*/
-
-function setupTrigger_onChange() {
-	ScriptApp.newTrigger("onChange")
-		.forSpreadsheet(SpreadsheetApp.getActive())
-		.onChange()
-		.create();
-}
-
-// INCOMPLETE
-// e.changeType : EDIT, INSERT_ROW, INSERT_COLUMN, REMOVE_ROW, REMOVE_COLUMN, INSERT_GRID, REMOVE_GRID, FORMAT, or OTHER
 
 function onChange(e) {
 	// if user added a sheet
@@ -310,28 +272,10 @@ function onChange(e) {
 	}
 }
 
-function getListOfGroups() {
-	spreadsheet.loadGroups();
-	return listOfGroup;
-}
-
-function warning() {
-	var ui = spreadsheet.getEditorUi();
-	var feature = [
-		"",
-		"Create a new group.",
-		"Multi-select ungroup sheets and move them to a group.",
-		"Click on the group name will show all the sheets for the group at the sheet bar.",
-		"At the right of each group name, you can edit(rename & color), ungroup and delete the group.",
-		"Click on the sheet name will show the sheet.",
-		"At the right of each sheet name, you can rename, ungroup(remove from a group) and delete the sheet.",
-	];
-	ui.alert(
-		"Important Messages",
-		"Warning: DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen. DO so only from THIS SIDEBAR, or else everything will MESSED UP.\n\nFeatures: " +
-			feature.join("\n - "),
-		ui.ButtonSet.OK
-	);
+function warning(){
+  var ui = spreadsheet.getEditorUi();
+  var feature = ["", "Create a new group.", "Multi-select ungroup sheets and move them to a group.", "Click on the group name will show all the sheets for the group at the sheet bar.", "At the right of each group name, you can edit(rename & color), ungroup and delete the group.","Click on the sheet name will show the sheet.","At the right of each sheet name, you can rename, ungroup(remove from a group) and delete the sheet."]
+  ui.alert('Important Messages using Group-Sheets','Warning: Due to limitation of Google App Script, DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen. DO so only from THIS SIDEBAR, or else everything will MESSED UP.\n\nFeatures: ' + feature.join("\n - "), ui.ButtonSet.OK);
 }
 
 function setActiveSheet(sheetName) {
@@ -343,6 +287,7 @@ function setActiveSheet(sheetName) {
 	}
 }
 
+// for sheet tab
 function unhideAndMoveSheets(groupName) {
 	spreadsheet.loadGroups();
 	var ss = spreadsheet.getActiveSpreadsheet();
