@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+	<head>
+		<base target="_top" />
+	</head>
+	<script>
+    let columns = []
+		function addColumn() {
+			let columnName = document.getElementById("column-name-input").value;
+
+			if (columnName != "") {
+				columns.push(columnName);
+			}
+		}
+
+		function createTemplatedSheet() {
+			google.script.run.createTemplatedSheet(columns);
+		}
+	</script>
+	<body>
+		Input fields provided: Product Name, Cost, Quantity, Total
+		<input id="column-name-input" type="text" placeholder="Column Name" />
+
+		<button onclick="addColumn()">Add</button>
+		<button onclick="createTemplatedSheet()">Confirm</button>
+	</body>
+</html>
