@@ -17,7 +17,6 @@ import {
 	createGroup,
 	createNewSheets,
 	showTemplateTypeSelectHTML,
-	showCreateInputFieldForm,
 	createTemplatedSheet,
 } from "./Code";
 
@@ -39,7 +38,6 @@ global.openSidebar = openSidebar;
 global.createGroup = createGroup;
 global.createNewSheets = createNewSheets;
 global.showTemplateTypeSelectHTML = showTemplateTypeSelectHTML;
-global.showCreateInputFieldForm = showCreateInputFieldForm;
 global.createTemplatedSheet = createTemplatedSheet;
 
 

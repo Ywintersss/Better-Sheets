@@ -4,9 +4,9 @@ const SIDEBAR =
 const SHEETCREATETEMPLATEHTML = HtmlService.createHtmlOutputFromFile(
 	"templatedSheetCreate"
 ).setTitle("Create Sheet from a Template");
-const CREATEINPUTFIELDFORMHTML = HtmlService.createHtmlOutputFromFile(
+/* const CREATEINPUTFIELDFORMHTML = HtmlService.createHtmlOutputFromFile(
 	"CreateInputFieldForm"
-).setTitle("Form Fields");
+).setTitle("Form Fields"); */
 
 let selectedSheetTemplate = {
 	sheetType: "",
@@ -723,20 +723,20 @@ function showTemplateTypeSelectHTML() {
  *
  */
 
-function showCreateInputFieldForm(sheetType) {
+/* function showCreateInputFieldForm(sheetType) {
 	var ui = spreadsheet.getEditorUi();
 	selectedSheetTemplate.setSheetType(sheetType);
 
 	ui.showSidebar(CREATEINPUTFIELDFORMHTML);
 }
-
+ */
 /**
  * Creates the templated sheet
  *
  * @param {Array} inputFormFields
  */
 
-function createTemplatedSheet(inputFormFields) {
+function createTemplatedSheet(inputFormFields, templateName) {
 	var ui = spreadsheet.getEditorUi();
 
 	var header = ui.prompt(
@@ -765,59 +765,58 @@ function createTemplatedSheet(inputFormFields) {
 				}
 			}
 		}
+
+		switch (templateName) {
+			case "INCOME_STATEMENT":
+				let ss = spreadsheet.getActiveSpreadsheet();
+				let inputFormTemplate = ss.getSheetByName(
+					"Input Form Template"
+				);
+				let incomeStatementTemplate = ss.getSheetByName(
+					"Income Statement Template"
+				);
+
+				ss.insertSheet({ template: inputFormTemplate })
+					.setName("Income Statement Input Form")
+					.getRange(
+						1,
+						inputFormTemplate.getLastColumn(),
+						inputFormTemplate.getLastRow(),
+						inputFormFields.length
+					)
+					.insertCells(SpreadsheetApp.Dimension.COLUMNS);
+
+				ss.insertSheet({ template: incomeStatementTemplate }).setName(
+					"Income Statement"
+				);
+
+				SpreadsheetApp.flush();
+
+				let newSheet = ss.getSheetByName("Income Statement Input Form");
+				newSheet
+					.getRange(
+						1,
+						newSheet.getLastColumn() - inputFormFields.length,
+						1,
+						inputFormFields.length
+					)
+					.setValues([inputFormFields]);
+
+				let reportStatement = ss
+					.getSheetByName("Income Statement")
+					.getRange("C3")
+					.setValue(header.getResponseText());
+				break;
+		}
 	} else if (header.getSelectedButton() == ui.Button.CANCEL) {
 		Logger.log("The user didn't want to provide a name.");
+		return;
 	} else {
 		Logger.log(
 			"The user clicked the close button in the dialog's title bar."
 		);
+		return;
 	}
-
-	/* 	switch (selectedSheetTemplate.sheetType) {
-		case "INCOME_STATEMENT":
-			let statementSheet = new Statement({
-				header: header,
-				title: "Income Statement",
-				period: period,
-				revenueDetails: {},
-				expensesDetails: {},
-			});
-			break;
-	}
- */
-	let ss = spreadsheet.getActiveSpreadsheet();
-	let inputFormTemplate = ss.getSheetByName("Input Form Template");
-	let incomeStatementTemplate = ss.getSheetByName(
-		"Income Statement Template"
-	);
-
-	ss.insertSheet({ template: inputFormTemplate })
-		.setName("Income Statement Input Form")
-		.getRange(
-			1,
-			inputFormTemplate.getLastColumn(),
-			inputFormTemplate.getLastRow(),
-			inputFormFields.length
-		)
-		.insertCells(SpreadsheetApp.Dimension.COLUMNS);
-
-	ss.insertSheet({ template: incomeStatementTemplate }).setName(
-		"Income Statement"
-	);
-
-	SpreadsheetApp.flush();
-
-	let newSheet = ss.getSheetByName("Income Statement Input Form");
-	newSheet
-		.getRange(
-			1,
-			newSheet.getLastColumn() - inputFormFields.length,
-			1,
-			inputFormFields.length
-		)
-		.setValues([inputFormFields]);
-
-	//Not working
 }
 export {
 	deleteGroup,
@@ -838,6 +837,5 @@ export {
 	createGroup,
 	createNewSheets,
 	showTemplateTypeSelectHTML,
-	showCreateInputFieldForm,
 	createTemplatedSheet,
 };
