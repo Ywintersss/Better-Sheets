@@ -36,6 +36,26 @@ const Statement = (() => {
     //Getters
 
     /**
+     * Gets the sheet's header
+     *
+     * @return {String}
+     */
+
+    getHeader() {
+      return super.getHeader();
+    }
+
+    /**
+     * Gets the timespan between each entry
+     *
+     * @return {String}
+     */
+
+    getPeriod() {
+      return super.getPeriod();
+    }
+
+    /**
      * Gets the details for Revenue
      *
      * @return {Object}

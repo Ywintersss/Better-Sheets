@@ -773,7 +773,7 @@ function createTemplatedSheet(inputFormFields) {
 		);
 	}
 
-	switch (selectedSheetTemplate.sheetType) {
+	/* 	switch (selectedSheetTemplate.sheetType) {
 		case "INCOME_STATEMENT":
 			let statementSheet = new Statement({
 				header: header,
@@ -782,22 +782,42 @@ function createTemplatedSheet(inputFormFields) {
 				revenueDetails: {},
 				expensesDetails: {},
 			});
-
-			break;
-
-		default:
 			break;
 	}
+ */
+	let ss = spreadsheet.getActiveSpreadsheet();
+	let inputFormTemplate = ss.getSheetByName("Input Form Template");
+	let incomeStatementTemplate = ss.getSheetByName(
+		"Income Statement Template"
+	);
 
-	let ss = spreadsheet.getActiveSpreadsheet()
-	let data = []
+	ss.insertSheet({ template: inputFormTemplate })
+		.setName("Income Statement Input Form")
+		.getRange(
+			1,
+			inputFormTemplate.getLastColumn(),
+			inputFormTemplate.getLastRow(),
+			inputFormFields.length
+		)
+		.insertCells(SpreadsheetApp.Dimension.COLUMNS);
 
-	data.push(inputFormFields);
+	ss.insertSheet({ template: incomeStatementTemplate }).setName(
+		"Income Statement"
+	);
 
-	let newSpreadsheet = ss.insertSheet().setName("Income Statement");
+	SpreadsheetApp.flush();
+
+	let newSheet = ss.getSheetByName("Income Statement Input Form");
+	newSheet
+		.getRange(
+			1,
+			newSheet.getLastColumn() - inputFormFields.length,
+			1,
+			inputFormFields.length
+		)
+		.setValues([inputFormFields]);
+
 	//Not working
-	newSpreadsheet.getRange(2, 2, data.length, inputFormFields.length).setValue(data);
-
 }
 export {
 	deleteGroup,
