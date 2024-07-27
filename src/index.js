@@ -15,7 +15,7 @@ import {
   addSheetsToGroup,
   openSidebar,
   createGroup,
-  createNewSheets,
+  createNewSheets
 } from "./Code";
 
 global.deleteGroup = deleteGroup;
