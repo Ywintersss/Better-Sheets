@@ -32,6 +32,47 @@
             const form = document.getElementById('ungroupForm');
             form.innerHTML = '';  // Clear existing content
 
+            // Search bar
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'search-container';
+
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.className = 'suggestions-container';
+            searchContainer.appendChild(suggestionsContainer);
+
+
+            const searchBar = document.createElement('input');
+            searchBar.className = 'search';
+            searchBar.type = 'search';
+            searchBar.placeholder = 'Search a sheet...';
+
+            searchBar.addEventListener('input', (event) => {
+                querySuggestions(event.target.value);
+            });
+
+            searchBar.addEventListener('keydown', (event) => {
+                // if enter is pressed
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    google.script.run.setActiveSheet(searchBar.value);
+                    searchBar.value = '';
+                }
+            });
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'search-icon';
+            iconSpan.innerHTML = '<i class="fas fa-search"></i>';
+
+            iconSpan.addEventListener('click', () => {
+                google.script.run.setActiveSheet(searchBar.value);
+                searchBar.value = '';
+            });
+            
+            searchContainer.appendChild(searchBar);
+            searchContainer.appendChild(iconSpan);
+
+            form.appendChild(searchContainer);
+
             // Generate the Ungroup section first
             if (db.hasOwnProperty('Ungroup')) {
                 const groupData = db['Ungroup'];
@@ -200,47 +241,6 @@
             addUngroupSheetsButton.textContent = 'Add ungrouped sheets to group';
             addUngroupSheetsButton.onclick = submitUngroupForm;
             form.appendChild(addUngroupSheetsButton);
-
-            // Search bar
-            const searchContainer = document.createElement('div');
-            searchContainer.className = 'search-container';
-
-            const suggestionsContainer = document.createElement('div');
-            suggestionsContainer.className = 'suggestions-container';
-            searchContainer.appendChild(suggestionsContainer);
-
-
-            const searchBar = document.createElement('input');
-            searchBar.className = 'search';
-            searchBar.type = 'search';
-            searchBar.placeholder = 'Search a sheet...';
-
-            searchBar.addEventListener('input', (event) => {
-                querySuggestions(event.target.value);
-            });
-
-            searchBar.addEventListener('keydown', (event) => {
-                // if enter is pressed
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    google.script.run.setActiveSheet(searchBar.value);
-                    searchBar.value = '';
-                }
-            });
-
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'search-icon';
-            iconSpan.innerHTML = '<i class="fas fa-search"></i>';
-
-            iconSpan.addEventListener('click', () => {
-                google.script.run.setActiveSheet(searchBar.value);
-                searchBar.value = '';
-            });
-            
-            searchContainer.appendChild(searchBar);
-            searchContainer.appendChild(iconSpan);
-
-            form.appendChild(searchContainer);
 
             // onclick for sheet name
             const items = document.querySelectorAll('.item');
@@ -596,6 +596,7 @@
         display: flex;
         flex-direction: column; 
         gap: 6px;
+        margin-block-end: 0.8em;
     }
 
     .suggestions-container{
@@ -605,7 +606,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         background-color: #fff;
         position: absolute;
-        bottom: 45px;
+        top: 45px;
         display: none;
     }
 
