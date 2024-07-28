@@ -12,11 +12,21 @@
     <div class="container">
         <div class="sidebar">
             <button class="button warning" type="button" onclick='warning()'>Warning: Read Me</button>
-            <form id="ungroupForm" action="ungroupForm"></form>
+            <form id="ungroupForm" action="ungroupForm">
+                <!-- <div class="search-container">
+                    <div class="suggestions-container"></div>
+                    <input class="search" type="search" placeholder="Search..." onkeyup="querySuggestions(this.value)">
+                </div> -->
+            </form>
         </div>
     </div>
     <script>
         var database = google.script.run.getListOfGroups();
+        var sheets = google.script.run.getListOfSheets();
+
+        function init(Sheets) {
+            sheets = Sheets;
+        }
 
         function generateHTMLFromDatabase(db) {
             const form = document.getElementById('ungroupForm');
@@ -191,6 +201,47 @@
             addUngroupSheetsButton.onclick = submitUngroupForm;
             form.appendChild(addUngroupSheetsButton);
 
+            // Search bar
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'search-container';
+
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.className = 'suggestions-container';
+            searchContainer.appendChild(suggestionsContainer);
+
+
+            const searchBar = document.createElement('input');
+            searchBar.className = 'search';
+            searchBar.type = 'search';
+            searchBar.placeholder = 'Search a sheet...';
+
+            searchBar.addEventListener('input', (event) => {
+                querySuggestions(event.target.value);
+            });
+
+            searchBar.addEventListener('keydown', (event) => {
+                // if enter is pressed
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    google.script.run.setActiveSheet(searchBar.value);
+                    searchBar.value = '';
+                }
+            });
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'search-icon';
+            iconSpan.innerHTML = '<i class="fas fa-search"></i>';
+
+            iconSpan.addEventListener('click', () => {
+                google.script.run.setActiveSheet(searchBar.value);
+                searchBar.value = '';
+            });
+            
+            searchContainer.appendChild(searchBar);
+            searchContainer.appendChild(iconSpan);
+
+            form.appendChild(searchContainer);
+
             // onclick for sheet name
             const items = document.querySelectorAll('.item');
             // Add click event listener to each item
@@ -310,7 +361,73 @@
             google.script.run.withSuccessHandler((db) => {
                 generateHTMLFromDatabase(db);
             }).getListOfGroups();
+            google.script.run.withSuccessHandler(init).getListOfSheets();
         });
+
+        
+        
+        let suggestionCount = 0;
+        
+        function querySuggestions(searchString) {
+            const SearchBar = document.querySelector('.search');
+            const autoComplete = (suggestion) => {
+                SearchBar.value = suggestion;
+                SearchBar.focus()
+                suggestionsContainer.style.display = 'none';
+                suggestionCount = 0
+            }
+            const createSuggestions = (suggestion) => {
+                if (suggestionCount >= 5) {
+                    return;
+                }
+                
+                const Suggestion = document.createElement('div');
+                Suggestion.classList.add('suggestion');
+
+                Suggestion.addEventListener('click', ()=>autoComplete(suggestion));
+                
+                const span = document.createElement('span');
+                span.textContent = suggestion;
+                
+                Suggestion.appendChild(span);
+                
+                suggestionsContainer.appendChild(Suggestion);
+                
+                suggestionCount++;
+            }
+            
+            const removeSuggestions = () => {
+                suggestionCount = 0
+                const suggestionsContainer = document.querySelector('.suggestions-container');
+                suggestionsContainer.innerHTML = '';
+            }
+
+            const suggestionsContainer = document.querySelector('.suggestions-container');
+            const queryString = searchString.toLowerCase();
+            
+            if (queryString === '') {
+                suggestionsContainer.style.display = 'none';
+                suggestionCount = 0;
+                return;
+            }
+
+            removeSuggestions();
+            
+            for (let i = 0; i < sheets.length; i++) {
+                const sheet = sheets[i];
+                const sheetName = sheet.toLowerCase();
+
+                if (sheetName.includes(queryString)) {
+                    createSuggestions(sheet);
+                }
+            }
+            
+            if (suggestionCount !== 0) {
+                suggestionsContainer.style.display = 'block';
+            } else {
+                suggestionsContainer.style.display = 'none';
+            }
+        }        
     </script>
 </body>
 
@@ -405,10 +522,12 @@
         /* Align items vertically */
         margin: 5px 0;
         /* Space between items */
+        padding: 0 0 0 2px;
     }
 
     .item-row:hover {
         background-color: #dbdbdb;
+        border-radius: 4px;
     }
 
     .item {
@@ -424,16 +543,11 @@
         /* Space between checkbox and label text */
     }
 
-    .item-icons {
+    .item-icons, .group-icons {
         display: flex;
         gap: 10px;
         /* Space between item icons */
-    }
-
-    .group-icons {
-        display: flex;
-        gap: 10px;
-        /* Space between group icons */
+        padding: 0 5px 0 0;
     }
 
     .icon {
@@ -476,6 +590,81 @@
 
     .warning:hover{
         background-color: #a62e2e;
+    }
+
+    .search-container {
+        display: flex;
+        flex-direction: column; 
+        gap: 6px;
+    }
+
+    .suggestions-container{
+        width: 100%;
+        border: 1px solid #555;
+        border-radius: 12px 12px 8px 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        background-color: #fff;
+        position: absolute;
+        bottom: 45px;
+        display: none;
+    }
+
+    .suggestion {
+        padding: 8px 10px ;
+        cursor: pointer;
+        transition: 0.1s;
+    }
+
+    .suggestion:first-child {
+        border-radius: 12px 12px 0 0
+    }
+
+    .suggestion:last-child {
+        border-radius: 0 0 8px 8px
+    }
+
+    .suggestion:hover {
+        background-color: #f0f0f0;
+    }
+
+    .suggestion:not(:last-child) {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .search {
+        font-family: 'Google Sans', sans-serif;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 14px;
+        padding: 10px 8px;
+        box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
+        transition: 0.15s ease;
+        position: relative;
+    }
+
+    .search:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    .search::placeholder {
+        color: #999;
+    }
+
+    .search-container{
+        position: relative;
+    }
+
+    .search-icon{
+        cursor: pointer;
+        position: absolute;
+        right: 13px;
+        bottom: 13px;
+        font-size: 0.7rem;
+    }
+
+    .search-container span i{
+        content: "\f1f8";
     }
 
     /* Responsive Styles */

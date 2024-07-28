@@ -8,6 +8,7 @@ import {
 	unhideAndMoveSheets,
 	setActiveSheet,
 	getListOfGroups,
+	getListOfSheets,
 	warning,
 	onChange,
 	onOpen,
@@ -29,6 +30,7 @@ global.renameSheet = renameSheet;
 global.unhideAndMoveSheets = unhideAndMoveSheets;
 global.setActiveSheet = setActiveSheet;
 global.getListOfGroups = getListOfGroups;
+global.getListOfSheets = getListOfSheets;
 global.warning = warning;
 global.onChange = onChange;
 global.onOpen = onOpen;

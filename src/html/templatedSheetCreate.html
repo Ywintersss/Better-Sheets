@@ -7,112 +7,7 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
 		/>
 	</head>
-	<script>
-		let columns = [];
-
-		function createTemplatedSheet() {
-			const templateName = document.getElementById("select-box").value;
-			google.script.run.createTemplatedSheet(columns, templateName);
-		}
-    
-    function enableInputField(){
-      const inputField = document.getElementById("field-input");
-      const inputContainer = document.querySelector(".input-container");
-      const templateFields = document.querySelector(".template-fields");
-      
-      if (inputField.disabled === false && !inputContainer.classList.contains("disabled")) {
-        return;
-      }
-      
-      //enables input field
-      inputField.disabled = false;
-      inputContainer.classList.remove("disabled");  
-    }
-
-    function changeTemplate() {
-      const templateName = document.getElementById("select-box").value;
-      
-      const removeFields = () => {
-        const templateFields = document.querySelector(".template-fields");
-        const nodesToRemove = [];
-
-        templateFields.childNodes.forEach((field) => { 
-          if (field.nodeType === Node.ELEMENT_NODE && field.nodeName !== "SPAN") {
-            nodesToRemove.push(field);
-          }
-        })
-
-        nodesToRemove.forEach((node) => {
-          templateFields.removeChild(node);
-        })
-      }
-
-      removeFields();
-
-			//add default fields here
-			if (templateName === "INCOME_STATEMENT") {
-				addField("Product Name", true);
-				addField("Quantity", true);
-				addField("Category", true);
-				addField("Status", true);
-				addField("Cost", true);
-				addField("Total", true);
-			}
-		}
-
-		function addField(fieldName, isDefault = false) {
-			const templateFields = document.querySelector(".template-fields");
-			const fieldNames = document.querySelectorAll(".field");
-
-      for (let i = 0; i < fieldNames.length; i++) {
-        const field = fieldNames[i];
-        if (field.childNodes[0].textContent === fieldName) {
-            console.log("Field already exists");
-            return;
-        }
-      }
-
-      
-      const fieldContainer = document.createElement("div");
-      fieldContainer.classList.add("field-container");
-      
-      const field = document.createElement("div");
-      field.classList.add("field");
-
-			const fieldText = document.createElement("span");
-			fieldText.textContent = fieldName;
-
-			field.appendChild(fieldText);
-
-			//template non default fields(user added fields)
-			if (!isDefault) {
-				const iconSpan = document.createElement("span");
-				iconSpan.classList.add("icon");
-
-				//remove function
-				iconSpan.addEventListener("click", () => {
-					fieldContainer.remove();
-					let index = columns.indexOf(fieldName);
-
-					if (index > -1) {
-						columns.splice(index, 1);
-					}
-				});
-
-				const icon = document.createElement("i");
-				icon.classList.add("fa-solid");
-				icon.classList.add("fa-trash");
-
-				iconSpan.appendChild(icon);
-				field.appendChild(iconSpan);
-				columns.push(fieldName);
-			}
-
-			fieldContainer.appendChild(field);
-
-			templateFields.appendChild(fieldContainer);
-		}
-	</script>
+	
 	<body>
 		<form>
 			<div class="form-content">
@@ -126,7 +21,7 @@
 							Select Sheet
 						</option>
 						<option value="INCOME_STATEMENT">Statements</option>
-						<option value="CASH_FLOW">Cash Flow</option>
+						<option value="CUSTOM">Custom</option>
 					</select>
 				</div>
 				<div class="template-fields">
@@ -159,6 +54,112 @@
 				</button>
 			</div>
 		</form>
+		<script>
+			let columns = [];
+	
+			function createTemplatedSheet() {
+				const templateName = document.getElementById("select-box").value;
+				google.script.run.createTemplatedSheet(columns, templateName);
+			}
+		
+			function enableInputField(){
+			const inputField = document.getElementById("field-input");
+			const inputContainer = document.querySelector(".input-container");
+			const templateFields = document.querySelector(".template-fields");
+			
+			if (inputField.disabled === false && !inputContainer.classList.contains("disabled")) {
+				return;
+			}
+			
+			//enables input field
+			inputField.disabled = false;
+			inputContainer.classList.remove("disabled");  
+			}
+	
+			function changeTemplate() {
+			const templateName = document.getElementById("select-box").value;
+			
+			const removeFields = () => {
+				const templateFields = document.querySelector(".template-fields");
+				const nodesToRemove = [];
+	
+				templateFields.childNodes.forEach((field) => { 
+				if (field.nodeType === Node.ELEMENT_NODE && field.nodeName !== "SPAN") {
+					nodesToRemove.push(field);
+				}
+				})
+	
+				nodesToRemove.forEach((node) => {
+				templateFields.removeChild(node);
+				})
+			}
+	
+			removeFields();
+	
+					//add default fields here
+					if (templateName === "INCOME_STATEMENT") {
+						addField("Product Name", true);
+						addField("Quantity", true);
+						addField("Category", true);
+						addField("Status", true);
+						addField("Cost", true);
+						addField("Total", true);
+					}
+				}
+	
+				function addField(fieldName, isDefault = false) {
+					const templateFields = document.querySelector(".template-fields");
+					const fieldNames = document.querySelectorAll(".field");
+	
+			for (let i = 0; i < fieldNames.length; i++) {
+				const field = fieldNames[i];
+				if (field.childNodes[0].textContent === fieldName) {
+					console.log("Field already exists");
+					return;
+				}
+			}
+	
+			
+			const fieldContainer = document.createElement("div");
+			fieldContainer.classList.add("field-container");
+			
+			const field = document.createElement("div");
+			field.classList.add("field");
+	
+				const fieldText = document.createElement("span");
+				fieldText.textContent = fieldName;
+	
+				field.appendChild(fieldText);
+	
+				//template non default fields(user added fields)
+				if (!isDefault) {
+					const iconSpan = document.createElement("span");
+					iconSpan.classList.add("icon");
+	
+					//remove function
+					iconSpan.addEventListener("click", () => {
+						fieldContainer.remove();
+						let index = columns.indexOf(fieldName);
+	
+						if (index > -1) {
+							columns.splice(index, 1);
+						}
+					});
+	
+					const icon = document.createElement("i");
+					icon.classList.add("fa-solid");
+					icon.classList.add("fa-trash");
+	
+					iconSpan.appendChild(icon);
+					field.appendChild(iconSpan);
+					columns.push(fieldName);
+				}
+	
+				fieldContainer.appendChild(field);
+	
+				templateFields.appendChild(fieldContainer);
+			}
+		</script>
 	</body>
 
 	<style>

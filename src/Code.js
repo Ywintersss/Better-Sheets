@@ -49,12 +49,10 @@ const spreadsheet = {
 	 */
 
 	getListOfSheets() {
-		// Open the spreadsheet by its ID
-		var spreadsheetId = this.getSpreadsheetId();
-		var sheetFile = SpreadsheetApp.openById(spreadsheetId);
+		var sheets = this.getActiveSpreadsheet().getSheets();
 
 		// Get all sheets in the spreadsheet
-		return sheetFile.getSheets();
+		return sheets
 	},
 
 	/**
@@ -281,6 +279,22 @@ function getListOfGroups() {
 	return listOfGroup;
 }
 
+function getListOfSheets(){
+	function isAllCapital(str) {
+		let regex = /^[A-Z]+$/;
+		return regex.test(str);
+	}
+
+	const sheets = []
+	
+	for (let i = 0; i < spreadsheet.getListOfSheets().length; i++) {
+		if (isAllCapital(spreadsheet.getListOfSheets()[i].getSheetName())) continue;
+		sheets.push(spreadsheet.getListOfSheets()[i].getSheetName());
+	}
+
+	return sheets;
+}
+
 //  Open sidebar
 function openSidebar() {
 	spreadsheet.loadGroups();
@@ -334,11 +348,14 @@ function warning() {
 }
 
 function setActiveSheet(sheetName) {
+	var ui = spreadsheet.getEditorUi();
 	var ss = SpreadsheetApp.getActiveSpreadsheet();
 	var sheet = ss.getSheetByName(sheetName);
 	if (sheet) {
 		sheet.showSheet();
 		ss.setActiveSheet(sheet);
+	} else {
+		ui.alert("Error", "Sheet: " + sheetName + " does not exist!", ui.ButtonSet.OK);
 	}
 }
 
@@ -881,6 +898,7 @@ export {
 	unhideAndMoveSheets,
 	setActiveSheet,
 	getListOfGroups,
+	getListOfSheets,
 	warning,
 	onChange,
 	onOpen,
