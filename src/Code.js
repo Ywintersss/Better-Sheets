@@ -138,10 +138,8 @@ function onOpen() {
 
 	// Create a menu button
 	var ui = spreadsheet.getEditorUi();
-	ui.createMenu("Group Sheets")
-		.addItem("Create a new group", "createGroup")
-		.addSeparator()
-		.addItem("Edit groups", "openSidebar")
+	ui.createMenu("Better Sheets for Accounting")
+		.addItem("Grouping sheets", "openSidebar")
 		.addSeparator()
 		.addItem("Add a templated sheet", "showTemplateTypeSelectHTML")
 		.addToUi();
@@ -279,21 +277,21 @@ function getListOfGroups() {
 	return listOfGroup;
 }
 
-function getListOfSheets(){
-	function isAllCapital(str) {
-		let regex = /^[A-Z]+$/;
-		return regex.test(str);
+function getListOfSheets() {
+	spreadsheet.loadGroups();
+	const allSheets = spreadsheet.getListOfSheets();
+	var sheets = [];
+  
+	for (let i = 0; i < allSheets.length; i++) {
+	  const sheetName = allSheets[i].getName();
+	  // Exclude sheets with names in groupNames or named 'DATABASE'
+	  if (!listOfGroup.hasOwnProperty(sheetName) && sheetName !== 'DATABASE') {
+		sheets.push(sheetName);
+	  }
 	}
-
-	const sheets = []
-	
-	for (let i = 0; i < spreadsheet.getListOfSheets().length; i++) {
-		if (isAllCapital(spreadsheet.getListOfSheets()[i].getSheetName())) continue;
-		sheets.push(spreadsheet.getListOfSheets()[i].getSheetName());
-	}
-
 	return sheets;
-}
+  }
+  
 
 //  Open sidebar
 function openSidebar() {
