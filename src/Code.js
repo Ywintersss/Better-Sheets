@@ -64,10 +64,7 @@ const spreadsheet = {
 	getDatabaseSheet() {
 		var ss = this.getActiveSpreadsheet();
 		var sheet = ss.getSheetByName(DATABASE);
-		if (!sheet) {
-			sheet = ss.insertSheet(DATABASE);
-			sheet.hideSheet();
-		}
+		
 		return sheet;
 	},
 
@@ -133,6 +130,22 @@ const spreadsheet = {
 
 function onOpen() {
 	warning();
+	var ss = spreadsheet.getActiveSpreadsheet();
+	var inputFormTemplate = ss.getSheetByName("INPUT FORM TEMPLATE");
+	var incomeStatementTemplate = ss.getSheetByName("INCOME STATEMENT TEMPLATE");
+	var source = SpreadsheetApp.openById("1hPJwuV6MVQbad0WGK2lVnRQC5bM758ITUi2ZKPXqRjA");
+	
+	if (!inputFormTemplate) {
+		var inputForm = source.getSheets()[0];
+		inputForm.copyTo(ss).setName("INPUT FORM TEMPLATE").hideSheet();
+	}
+
+	if (!incomeStatementTemplate) {
+
+		var incomeStatement = source.getSheets()[1];
+		
+		incomeStatement.copyTo(ss).setName("INCOME STATEMENT TEMPLATE").hideSheet();
+	}
 
 	// Load database
 	spreadsheet.loadGroups();
@@ -914,30 +927,32 @@ function createTemplatedSheet(inputFormFields, templateName) {
 					ui.alert("Sheets already created");
 					return;
 				}
-				let inputFormTemplate = ss.getSheetByName(
+
+				
+				let inputForm = ss.getSheetByName(
 					"INPUT FORM TEMPLATE"
 				);
-				let incomeStatementTemplate = ss.getSheetByName(
+				let incomeStatement = ss.getSheetByName(
 					"INCOME STATEMENT TEMPLATE"
 				);
 
 				if (inputFormFields.length != 0) {
-					ss.insertSheet({ template: inputFormTemplate })
+					ss.insertSheet({template: inputForm})
 						.setName("Income Statement Input Form")
 						.getRange(
 							1,
-							inputFormTemplate.getLastColumn(),
-							inputFormTemplate.getLastRow(),
+							inputForm.getLastColumn(),
+							inputForm.getLastRow(),
 							inputFormFields.length
 						)
 						.insertCells(SpreadsheetApp.Dimension.COLUMNS);
 				} else {
-					ss.insertSheet({ template: inputFormTemplate }).setName(
+					ss.insertSheet({template: inputForm}).setName(
 						"Income Statement Input Form"
 					);
 				}
 
-				ss.insertSheet({ template: incomeStatementTemplate }).setName(
+				ss.insertSheet({template: incomeStatement}).setName(
 					"Income Statement"
 				);
 
