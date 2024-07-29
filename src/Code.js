@@ -119,8 +119,8 @@ const spreadsheet = {
 			if (
 				groupedSheetNames.indexOf(sheetName) === -1 &&
 				sheetName != "DATABASE" &&
-				sheetName != "Input Form Template" &&
-				sheetName != "Income Statement Template" &&
+				sheetName != "INPUT FORM TEMPLATE" &&
+				sheetName != "INCOME STATEMENT TEMPLATE" &&
 				!(sheetName in listOfGroup)
 			) {
 				var s = spreadsheet.getActiveSpreadsheet().getSheetByName(sheetName);
@@ -915,10 +915,10 @@ function createTemplatedSheet(inputFormFields, templateName) {
 					return;
 				}
 				let inputFormTemplate = ss.getSheetByName(
-					"Input Form Template"
+					"INPUT FORM TEMPLATE"
 				);
 				let incomeStatementTemplate = ss.getSheetByName(
-					"Income Statement Template"
+					"INCOME STATEMENT TEMPLATE"
 				);
 
 				if (inputFormFields.length != 0) {
