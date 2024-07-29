@@ -123,6 +123,8 @@ const spreadsheet = {
 				sheetName != "Income Statement Template" &&
 				!(sheetName in listOfGroup)
 			) {
+				var s = spreadsheet.getActiveSpreadsheet().getSheetByName(sheetName);
+				s.setTabColor(null);
 				listOfGroup["Ungroup"]["sheets"].push(sheetName);
 			}
 		});
@@ -253,9 +255,9 @@ function addSheetsToGroup(list) {
 				ui.alert(
 					"Success",
 					"Sheets: [" +
-						list.join(", ") +
-						"] added to group: " +
-						groupName,
+					list.join(", ") +
+					"] added to group: " +
+					groupName,
 					ui.ButtonSet.OK
 				);
 			} else {
@@ -281,17 +283,17 @@ function getListOfSheets() {
 	spreadsheet.loadGroups();
 	const allSheets = spreadsheet.getListOfSheets();
 	var sheets = [];
-  
+
 	for (let i = 0; i < allSheets.length; i++) {
-	  const sheetName = allSheets[i].getName();
-	  // Exclude sheets with names in groupNames or named 'DATABASE'
-	  if (!listOfGroup.hasOwnProperty(sheetName) && sheetName !== 'DATABASE') {
-		sheets.push(sheetName);
-	  }
+		const sheetName = allSheets[i].getName();
+		// Exclude sheets with names in groupNames or named 'DATABASE'
+		if (!listOfGroup.hasOwnProperty(sheetName) && sheetName !== 'DATABASE') {
+			sheets.push(sheetName);
+		}
 	}
 	return sheets;
-  }
-  
+}
+
 
 //  Open sidebar
 function openSidebar() {
@@ -328,21 +330,111 @@ function onChange(e) {
 
 function warning() {
 	var ui = spreadsheet.getEditorUi();
-	var feature = [
-		"",
-		"Create a new group.",
+	var warnings = [
+		"- DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen.",
+		"DO so only from THIS SIDEBAR, or else the features would work wrongly.",
+		"Click RESET button if you accidentally DELETE or RENAME from the sheet bar."
+	]
+	var features = [
+		"- Create a new group.",
 		"Multi-select ungroup sheets and move them to a group.",
 		"Click on the group name will show all the sheets for the group at the sheet bar.",
 		"At the right of each group name, you can edit(rename & color), ungroup and delete the group.",
 		"Click on the sheet name will show the sheet.",
 		"At the right of each sheet name, you can rename, ungroup(remove from a group) and delete the sheet.",
 	];
-	ui.alert(
-		"Important Messages using Group-Sheets",
-		"Warning: Due to limitation of Google App Script, DO NOT DELETE or RENAME sheets from the sheet bar at the bottom of your screen. DO so only from THIS SIDEBAR, or else everything will MESSED UP.\n\nFeatures: " +
-			feature.join("\n - "),
-		ui.ButtonSet.OK
+	// ui.alert(
+	// 	"Important Messages using 'Grouping Sheets'",
+	// 	"Warning: Due to limitation of Google App Script," + warnings.join("\n - ") + "\n\nFeatures: " +
+	// 	features.join("\n - "),
+	// 	ui.ButtonSet.OK
+	// );
+	var htmlContent = `
+	<style>
+	::-webkit-scrollbar {
+		width: 5px;
+		/* Width of the scrollbar */
+	}
+
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+		/* Color of the track */
+		border-radius: 10px;
+		/* Rounded corners */
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #888;
+		/* Color of the thumb */
+		border-radius: 10px;
+		/* Rounded corners */
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+		/* Color of the thumb on hover */
+	}
+
+	::-webkit-scrollbar-button {
+		background: #f1f1f1;
+		border-radius: 10px;
+	}
+		
+	body {
+	font-family: 'Google Sans', sans-serif;
+	}
+	h4 {
+		margin: 8px 0;
+	}
+	p {
+		margin: 0;
+		padding: 0 1em;
+	}
+    </style>
+    <h4 class="header-warning">Warning: Due to limitation of Google App Script,</h4>
+    <p class="text-warning">${warnings.join("<br> - ")}</p>
+    <h4 class="header-features">Features:</h4>
+    <p class="text-features">${features.join("<br> - ")}</p>
+  `;
+	// var htmlOutput = HtmlService.createHtmlOutput(
+	// 	"<p>Warning: Due to limitation of Google App Script," + warnings.join("<br> - ") + "</p>" +
+	// 	"<p>Features: " + features.join("<br> - ") + "</p>"
+	// ).setWidth(500).setHeight(400);
+	// ui.showModalDialog(htmlOutput, "Important Messages using 'Grouping Sheets'");
+
+	var htmlOutput = HtmlService.createHtmlOutput(htmlContent).setWidth(500).setHeight(360);
+	ui.showModalDialog(htmlOutput, "Important Messages using 'Grouping Sheets'");
+
+}
+
+function resetGroup() {
+	spreadsheet.loadGroups();
+	var ui = spreadsheet.getEditorUi();
+	var response = ui.alert(
+		"Confirmation",
+		'Are you sure you want to reset the groups? (Meaning that all groups will be ungrouped.)',
+		ui.ButtonSet.YES_NO
 	);
+	if (response == ui.Button.YES) {
+		var ss = spreadsheet.getActiveSpreadsheet();
+		ss.getSheets().forEach((sheet) => {
+			var sheetName = sheet.getName();
+			if (
+				listOfGroup.hasOwnProperty(sheetName)
+			) {
+				ss.deleteSheet(sheet);
+			}
+		});
+
+		listOfGroup = {};
+		ui.alert(
+			"Success'",
+			"Groups reset successfully.",
+			ui.ButtonSet.OK
+		);
+		spreadsheet.saveGroups();
+		openSidebar();
+	}
 }
 
 function setActiveSheet(sheetName) {
@@ -427,8 +519,8 @@ function renameSheet(groupName, sheetName) {
 			ui.alert(
 				"Error",
 				'The name: "' +
-					newName +
-					'" already exists as a group. Please enter another name.',
+				newName +
+				'" already exists as a group. Please enter another name.',
 				ui.ButtonSet.OK
 			);
 			return;
@@ -441,8 +533,8 @@ function renameSheet(groupName, sheetName) {
 			ui.alert(
 				"Error",
 				'The name: "' +
-					newName +
-					'" already exists as a sheet. Please enter another name.',
+				newName +
+				'" already exists as a sheet. Please enter another name.',
 				ui.ButtonSet.OK
 			);
 			return;
@@ -482,8 +574,8 @@ function ungroupSheet(groupName, sheetName) {
 	var response = ui.alert(
 		"Confirmation",
 		'Are you sure you want to remove from group for sheet: "' +
-			sheetName +
-			'"?',
+		sheetName +
+		'"?',
 		ui.ButtonSet.YES_NO
 	);
 
@@ -584,8 +676,8 @@ function editGroup(groupName) {
 			ui.alert(
 				"Error",
 				'The name: "' +
-					newName +
-					'" already exists as a group. Please enter another name.',
+				newName +
+				'" already exists as a group. Please enter another name.',
 				ui.ButtonSet.OK
 			);
 			return;
@@ -598,8 +690,8 @@ function editGroup(groupName) {
 			ui.alert(
 				"Error",
 				'The name: "' +
-					newName +
-					'" already exists as a sheet. Please enter another name.',
+				newName +
+				'" already exists as a sheet. Please enter another name.',
 				ui.ButtonSet.OK
 			);
 			return;
@@ -658,8 +750,8 @@ function ungroupGroup(groupName) {
 	var response = ui.alert(
 		"Confirmation",
 		'Are you sure you want to ungroup for : "' +
-			groupName +
-			'"? (including the sheets inside)',
+		groupName +
+		'"? (including the sheets inside)',
 		ui.ButtonSet.YES_NO
 	);
 
@@ -705,8 +797,8 @@ function deleteGroup(groupName) {
 	var response = ui.alert(
 		"Confirmation",
 		'Are you sure you want to delete group: "' +
-			groupName +
-			'"? (including the sheets inside)',
+		groupName +
+		'"? (including the sheets inside)',
 		ui.ButtonSet.YES_NO
 	);
 
@@ -898,6 +990,7 @@ export {
 	getListOfGroups,
 	getListOfSheets,
 	warning,
+	resetGroup,
 	onChange,
 	onOpen,
 	setupTrigger_onChange,

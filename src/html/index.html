@@ -11,12 +11,11 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <button class="button warning" type="button" onclick='warning()'>Warning: Read Me</button>
+            <div class="warning-row">
+                <button class="button warning" type="button" onclick='warning()'>Warning: Read Me</button>
+                <span class="icon reset" title="Reset" onclick="resetGroup()"><i class="fa-solid fa-arrows-rotate"></i></span>
+            </div>
             <form id="ungroupForm" action="ungroupForm">
-                <!-- <div class="search-container">
-                    <div class="suggestions-container"></div>
-                    <input class="search" type="search" placeholder="Search..." onkeyup="querySuggestions(this.value)">
-                </div> -->
             </form>
         </div>
     </div>
@@ -67,7 +66,7 @@
                 google.script.run.setActiveSheet(searchBar.value);
                 searchBar.value = '';
             });
-            
+
             searchContainer.appendChild(searchBar);
             searchContainer.appendChild(iconSpan);
 
@@ -84,7 +83,7 @@
 
                 const groupTitle = document.createElement('h3');
                 groupTitle.textContent = 'Ungrouped';
-                groupTitle.id= 'Ungroup';
+                groupTitle.id = 'Ungroup';
                 groupHeader.appendChild(groupTitle);
 
                 const groupIcons = document.createElement('div');
@@ -105,7 +104,7 @@
 
                     const itemLabel = document.createElement('label');
                     itemLabel.className = 'item';
-                    itemLabel.id= sheet;
+                    itemLabel.id = sheet;
                     const itemText = document.createTextNode(sheet);
 
                     const itemInput = document.createElement('input');
@@ -125,7 +124,7 @@
                     pencilIcon.title = 'Rename';
                     pencilIcon.innerHTML = '<i class="fa-solid fa-pencil"></i>';
                     itemIcons.appendChild(pencilIcon);
-                    
+
                     const deleteItemIcon = document.createElement('span');
                     deleteItemIcon.className = 'icon sheet-delete';
                     deleteItemIcon.title = 'Delete Sheet';
@@ -155,7 +154,7 @@
                 groupTitle.title = "Click to hide / unhide group";
                 groupTitle.className = 'group-header';
                 groupTitle.textContent = groupName;
-                groupTitle.id= groupName;
+                groupTitle.id = groupName;
                 groupInfo.appendChild(groupTitle);
 
                 if (groupData.color) {
@@ -196,7 +195,7 @@
 
                     const itemLabel = document.createElement('label');
                     itemLabel.className = 'item';
-                    itemLabel.id= sheet;
+                    itemLabel.id = sheet;
                     itemLabel.textContent = sheet;
                     itemRow.appendChild(itemLabel);
 
@@ -246,71 +245,71 @@
             const items = document.querySelectorAll('.item');
             // Add click event listener to each item
             items.forEach(item => {
-              item.addEventListener('click', itemOnClick);
+                item.addEventListener('click', itemOnClick);
             });
 
             // onclick for group name
             const headers = document.querySelectorAll('.group-header');
             // Add click event listener to each item
             headers.forEach(header => {
-              header.addEventListener('click', headerOnClick);
+                header.addEventListener('click', headerOnClick);
             });
 
             // onclick for sheet rename
             const sheetEditIcons = document.querySelectorAll('span.sheet-rename');
             sheetEditIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
-                const sheetName = icon.closest('.item-row').querySelector('.item').id;
-                google.script.run.renameSheet(groupName,sheetName);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
+                    const sheetName = icon.closest('.item-row').querySelector('.item').id;
+                    google.script.run.renameSheet(groupName, sheetName);
+                });
             });
 
             // onclick for sheet ungroup
             const sheetUngroupIcons = document.querySelectorAll('span.sheet-ungroup');
             sheetUngroupIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
-                const sheetName = icon.closest('.item-row').querySelector('.item').id;
-                google.script.run.ungroupSheet(groupName,sheetName);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
+                    const sheetName = icon.closest('.item-row').querySelector('.item').id;
+                    google.script.run.ungroupSheet(groupName, sheetName);
+                });
             });
 
             // onclick for sheet delete
             const sheetDeleteIcons = document.querySelectorAll('span.sheet-delete');
             sheetDeleteIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
-                const sheetName = icon.closest('.item-row').querySelector('.item').id;
-                google.script.run.deleteSheet(groupName,sheetName);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupName = icon.closest('.group').querySelector('.group-row').querySelector('h3').id;
+                    const sheetName = icon.closest('.item-row').querySelector('.item').id;
+                    google.script.run.deleteSheet(groupName, sheetName);
+                });
             });
 
             // onclick for group edit
             const groupEditIcons = document.querySelectorAll('span.group-edit');
             groupEditIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupHeader = icon.closest('.group-row').querySelector('.group-header').id;
-                google.script.run.editGroup(groupHeader);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupHeader = icon.closest('.group-row').querySelector('.group-header').id;
+                    google.script.run.editGroup(groupHeader);
+                });
             });
 
             // onclick for group ungroup
             const groupUngroupIcons = document.querySelectorAll('span.group-ungroup');
             groupUngroupIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupHeader = icon.closest('.group-row').querySelector('.group-header').id;
-                google.script.run.ungroupGroup(groupHeader);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupHeader = icon.closest('.group-row').querySelector('.group-header').id;
+                    google.script.run.ungroupGroup(groupHeader);
+                });
             });
 
             // onclick for group delete
             const groupDeleteIcons = document.querySelectorAll('span.group-delete');
             groupDeleteIcons.forEach(icon => {
-              icon.addEventListener('click', (event) => {
-                const groupHeader = icon.closest('.group-row').querySelector('h3').id;
-                google.script.run.deleteGroup(groupHeader);
-              });
+                icon.addEventListener('click', (event) => {
+                    const groupHeader = icon.closest('.group-row').querySelector('h3').id;
+                    google.script.run.deleteGroup(groupHeader);
+                });
             });
         }
 
@@ -327,7 +326,7 @@
                     selectedItems.push(entry[0]);
                 }
             }
-        
+
             google.script.run.withSuccessHandler((db) => {
                 generateHTMLFromDatabase(db);
             }).addSheetsToGroup(selectedItems);
@@ -337,8 +336,12 @@
             google.script.run.createGroup();
         }
 
-        function warning(){
+        function warning() {
             google.script.run.warning();
+        }
+
+        function resetGroup() {
+            google.script.run.resetGroup();
         }
 
         function itemOnClick(event) {
@@ -364,10 +367,10 @@
             google.script.run.withSuccessHandler(init).getListOfSheets();
         });
 
-        
-        
+
+
         let suggestionCount = 0;
-        
+
         function querySuggestions(searchString) {
             const SearchBar = document.querySelector('.search');
             const autoComplete = (suggestion) => {
@@ -380,22 +383,22 @@
                 if (suggestionCount >= 5) {
                     return;
                 }
-                
+
                 const Suggestion = document.createElement('div');
                 Suggestion.classList.add('suggestion');
 
-                Suggestion.addEventListener('click', ()=>autoComplete(suggestion));
-                
+                Suggestion.addEventListener('click', () => autoComplete(suggestion));
+
                 const span = document.createElement('span');
                 span.textContent = suggestion;
-                
+
                 Suggestion.appendChild(span);
-                
+
                 suggestionsContainer.appendChild(Suggestion);
-                
+
                 suggestionCount++;
             }
-            
+
             const removeSuggestions = () => {
                 suggestionCount = 0
                 const suggestionsContainer = document.querySelector('.suggestions-container');
@@ -404,7 +407,7 @@
 
             const suggestionsContainer = document.querySelector('.suggestions-container');
             const queryString = searchString.toLowerCase();
-            
+
             if (queryString === '') {
                 suggestionsContainer.style.display = 'none';
                 suggestionCount = 0;
@@ -412,7 +415,7 @@
             }
 
             removeSuggestions();
-            
+
             for (let i = 0; i < sheets.length; i++) {
                 const sheet = sheets[i];
                 const sheetName = sheet.toLowerCase();
@@ -421,7 +424,7 @@
                     createSuggestions(sheet);
                 }
             }
-            
+
             if (suggestionCount !== 0) {
                 suggestionsContainer.style.display = 'block';
             } else {
@@ -479,7 +482,7 @@
     }
 
     .group:hover {
-      background-color: #f0f0f0;
+        background-color: #f0f0f0;
     }
 
     .group-row,
@@ -543,7 +546,8 @@
         /* Space between checkbox and label text */
     }
 
-    .item-icons, .group-icons {
+    .item-icons,
+    .group-icons {
         display: flex;
         gap: 10px;
         /* Space between item icons */
@@ -584,22 +588,40 @@
         /* Darker shade on hover */
     }
 
-    .warning{
+    .warning {
         background-color: #e54141;
     }
+    
+    .warning-row {
+        margin-block-end: 0.8em;
+        align-items: center;
+        display: flex;
+    }
+    
+    .warning-row .button {
+        flex-grow: 1;
+        margin-block-end: 0;
+        width: 0;
+    }
+    
+    .warning-row .icon {
+        font-size: 1em;
+        margin-left: 1em;
+        color: #e54141;
+    }
 
-    .warning:hover{
+    .warning:hover {
         background-color: #a62e2e;
     }
 
     .search-container {
         display: flex;
-        flex-direction: column; 
+        flex-direction: column;
         gap: 6px;
         margin-block-end: 0.8em;
     }
 
-    .suggestions-container{
+    .suggestions-container {
         width: 100%;
         border: 1px solid #555;
         border-radius: 12px 12px 8px 8px;
@@ -611,7 +633,7 @@
     }
 
     .suggestion {
-        padding: 8px 10px ;
+        padding: 8px 10px;
         cursor: pointer;
         transition: 0.1s;
     }
@@ -652,11 +674,11 @@
         color: #999;
     }
 
-    .search-container{
+    .search-container {
         position: relative;
     }
 
-    .search-icon{
+    .search-icon {
         cursor: pointer;
         position: absolute;
         right: 13px;
@@ -664,7 +686,7 @@
         font-size: 0.7rem;
     }
 
-    .search-container span i{
+    .search-container span i {
         content: "\f1f8";
     }
 
@@ -684,30 +706,35 @@
             /* Add space above the sidebar */
         }
     }
-    
+
     ::-webkit-scrollbar {
-        width: 5px; /* Width of the scrollbar */
+        width: 5px;
+        /* Width of the scrollbar */
     }
 
     ::-webkit-scrollbar-track {
-        background: #f1f1f1; /* Color of the track */
-        border-radius: 10px; /* Rounded corners */
+        background: #f1f1f1;
+        /* Color of the track */
+        border-radius: 10px;
+        /* Rounded corners */
     }
 
     ::-webkit-scrollbar-thumb {
-        background: #888; /* Color of the thumb */
-        border-radius: 10px; /* Rounded corners */
+        background: #888;
+        /* Color of the thumb */
+        border-radius: 10px;
+        /* Rounded corners */
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #555; /* Color of the thumb on hover */
+        background: #555;
+        /* Color of the thumb on hover */
     }
 
     ::-webkit-scrollbar-button {
         background: #f1f1f1;
         border-radius: 10px;
     }
-
 </style>
 
 </html>

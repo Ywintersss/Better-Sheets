@@ -10,6 +10,7 @@ import {
 	getListOfGroups,
 	getListOfSheets,
 	warning,
+	resetGroup,
 	onChange,
 	onOpen,
 	setupTrigger_onChange,
@@ -32,6 +33,7 @@ global.setActiveSheet = setActiveSheet;
 global.getListOfGroups = getListOfGroups;
 global.getListOfSheets = getListOfSheets;
 global.warning = warning;
+global.resetGroup = resetGroup;
 global.onChange = onChange;
 global.onOpen = onOpen;
 global.setupTrigger_onChange = setupTrigger_onChange;
